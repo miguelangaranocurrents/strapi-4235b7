@@ -752,7 +752,11 @@ const RelationModalWithContext = ({
 
   React.useLayoutEffect(() => {
     setTextValue('');
-  }, [fieldValue]);
+    // Once a relation is connected/disconnected the typed search no longer applies, so the
+    // query must go back to an unfiltered search. Otherwise the remaining relations are only
+    // fetched on reopen and the dropdown briefly reports "No relations available".
+    setSearchParams((s) => (s._q === '' && s.page === 1 ? s : { ...s, _q: '', page: 1 }));
+  }, [fieldValue, setSearchParams]);
 
   const handleSearch = async (search: string) => {
     setSearchParams((s) => ({ ...s, _q: search, page: 1 }));
